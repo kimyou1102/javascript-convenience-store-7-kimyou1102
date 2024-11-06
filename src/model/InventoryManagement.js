@@ -19,4 +19,14 @@ export default class InventoryManagement {
     }
     return false;
   }
+
+  buyProduct(productInfo) {
+    const index = this.getInventoryInfo().findIndex(
+      (e) => e.name === productInfo.name,
+    );
+    const product = this.getInventoryInfo()[index];
+
+    this.#inventoryInfo[index].quantity =
+      product.quantity - productInfo.quantity;
+  }
 }
