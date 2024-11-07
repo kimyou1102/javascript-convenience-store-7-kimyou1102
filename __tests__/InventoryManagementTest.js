@@ -9,6 +9,42 @@ describe('재고관리 테스트', () => {
     expect(inventoryManagement.getInventoryInfo()).toBe(productData);
   });
 
+  test.each([
+    ['감자칩', '반짝할인'],
+    ['콜라', '탄산2+1'],
+    ['비타민워터', ''],
+  ])(
+    '상품 이름으로 프로모션 이름을 가져올 수 있다.',
+    (productName, promotionName) => {
+      const productData = [
+        {
+          name: '콜라',
+          price: 1000,
+          quantity: 10,
+          promotion: '탄산2+1',
+        },
+        {
+          name: '감자칩',
+          price: 1500,
+          quantity: 5,
+          promotion: '반짝할인',
+        },
+        {
+          name: '비타민워터',
+          price: 1500,
+          quantity: 5,
+          promotion: 'null',
+        },
+      ];
+
+      const inventoryManagement = new InventoryManagement(productData);
+
+      expect(
+        inventoryManagement.getPromotionNameByProductName(productName),
+      ).toBe(promotionName);
+    },
+  );
+
   test('재고가 있는 상품은 구매 가능하다.', () => {
     const productData = [
       {
