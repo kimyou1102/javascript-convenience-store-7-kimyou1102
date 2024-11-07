@@ -114,7 +114,7 @@ describe('프로모션 정보 클래스 테스트', () => {
 
       const promotionInfo = new PromotionInfo(PROMOTIONS);
 
-      expect(promotionInfo.insufficientCount(PROMOTION, QUANTITY)).toBe(COUNT);
+      expect(promotionInfo.inSufficientCount(PROMOTION, QUANTITY)).toBe(COUNT);
     },
   );
 });
