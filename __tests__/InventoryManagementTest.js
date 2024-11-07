@@ -1,4 +1,4 @@
-import InventoryManagement from '../src/model/InventoryManagement';
+import InventoryManagement from '../src/model/InventoryManagement.js';
 
 describe('재고관리 테스트', () => {
   test('상품 정보를 가질 수 있다.', () => {
