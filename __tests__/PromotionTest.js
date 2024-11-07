@@ -24,6 +24,27 @@ describe('프로모션 정보 클래스 테스트', () => {
     expect(promotionInfo.getPromotionInfo()).toEqual(PROMOTIONS);
   });
 
+  test('해당하는 프로모션이 없다면 적용할 수 없다.', () => {
+    const PROMOTIONS = [
+      {
+        name: 'MD추천상품',
+        buy: 1,
+        get: 1,
+        start_date: '2024-01-01',
+        end_date: '2024-12-31',
+      },
+    ];
+
+    const PROMOTION_NAME = 'null';
+    const NOW_DATE = '2023-12-31';
+
+    const promotionInfo = new PromotionInfo(PROMOTIONS);
+
+    expect(promotionInfo.isPromotionApplicable(PROMOTION_NAME, NOW_DATE)).toBe(
+      false,
+    );
+  });
+
   const BEFORE_DATE = '2023-12-31';
   const AFTER_DATE = '2025-01-01';
 
@@ -32,7 +53,7 @@ describe('프로모션 정보 클래스 테스트', () => {
     ['MD추천상품', AFTER_DATE],
   ])(
     '오늘 날짜가 프로모션 기간을 벗어났다면 적용할 수 없다.',
-    (PROMOTION, NOW_DATE) => {
+    (PROMOTION_NAME, NOW_DATE) => {
       const PROMOTIONS = [
         {
           name: 'MD추천상품',
@@ -44,11 +65,11 @@ describe('프로모션 정보 클래스 테스트', () => {
       ];
 
       const promotionInfo = new PromotionInfo(PROMOTIONS);
-      promotionInfo.isIncludePromotionDate(PROMOTION, NOW_DATE);
+      promotionInfo.isPromotionApplicable(PROMOTION_NAME, NOW_DATE);
 
-      expect(promotionInfo.isIncludePromotionDate(PROMOTION, NOW_DATE)).toBe(
-        false,
-      );
+      expect(
+        promotionInfo.isPromotionApplicable(PROMOTION_NAME, NOW_DATE),
+      ).toBe(false);
     },
   );
 
@@ -60,7 +81,7 @@ describe('프로모션 정보 클래스 테스트', () => {
     ['MD추천상품', END_DATE],
   ])(
     '오늘 날짜가 프로모션 기간 내에 포함된다면 할인을 적용할 수 있다.',
-    (PROMOTION, NOW_DATE) => {
+    (PROMOTION_NAME, NOW_DATE) => {
       const PROMOTIONS = [
         {
           name: '탄산2+1',
@@ -79,11 +100,10 @@ describe('프로모션 정보 클래스 테스트', () => {
       ];
 
       const promotionInfo = new PromotionInfo(PROMOTIONS);
-      promotionInfo.isIncludePromotionDate(PROMOTION, NOW_DATE);
 
-      expect(promotionInfo.isIncludePromotionDate(PROMOTION, NOW_DATE)).toBe(
-        true,
-      );
+      expect(
+        promotionInfo.isPromotionApplicable(PROMOTION_NAME, NOW_DATE),
+      ).toBe(true);
     },
   );
 
