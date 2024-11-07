@@ -9,6 +9,15 @@ export default class InventoryManagement {
     return this.#inventoryInfo;
   }
 
+  getPromotionNameByProductName(productName) {
+    const product = this.#inventoryInfo.filter(
+      (product) => product.name === productName && product.promotion !== 'null',
+    );
+
+    if (product.length === 0) return '';
+    return product[0].promotion;
+  }
+
   isPurchasable(productInfo) {
     const product = this.getInventoryInfo().filter(
       (e) => e.name === productInfo.name,
