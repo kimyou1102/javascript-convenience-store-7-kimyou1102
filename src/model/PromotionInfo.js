@@ -31,4 +31,15 @@ export default class PromotionInfo {
     }
     return false;
   }
+
+  inSufficientCount(promotionName, productQuantity) {
+    const { buy } = this.#promotionInfo.find(
+      (promotion) => promotion.name === promotionName,
+    );
+    if (productQuantity % buy !== 0) {
+      const count = Math.ceil(productQuantity / buy);
+      return buy * count - productQuantity;
+    }
+    return 0;
+  }
 }
