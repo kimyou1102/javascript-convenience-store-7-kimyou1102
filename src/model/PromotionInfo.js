@@ -22,7 +22,14 @@ export default class PromotionInfo {
     };
   }
 
-  isIncludePromotionDate(promotionName, now) {
+  getPromotion(promotionName) {
+    return this.#promotionInfo.find(
+      (promotion) => promotion.name === promotionName,
+    );
+  }
+
+  isPromotionApplicable(promotionName, now) {
+    if (!this.getPromotion(promotionName)) return false;
     const { startDate, endDate } = this.getPromotionDateByName(promotionName);
     const nowDate = new Date(now);
 
