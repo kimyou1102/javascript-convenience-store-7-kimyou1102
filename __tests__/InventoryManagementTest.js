@@ -63,11 +63,12 @@ describe('재고관리 테스트', () => {
     const productInfo = {
       name: '콜라',
       quantity: 3,
+      promotion: '탄산2+1',
     };
 
     const inventoryManagement = new InventoryManagement(productData);
 
-    expect(inventoryManagement.isPurchasable(productInfo)).toBe(true);
+    expect(inventoryManagement.inSufficientCount(productInfo)).toBe(0);
   });
 
   test('재고가 없는 상품은 구매 가능하다.', () => {
@@ -88,10 +89,11 @@ describe('재고관리 테스트', () => {
     const productInfo = {
       name: '사이다',
       quantity: 10,
+      promotion: '탄산2+1',
     };
     const inventoryManagement = new InventoryManagement(productData);
 
-    expect(inventoryManagement.isPurchasable(productInfo)).toBe(false);
+    expect(inventoryManagement.inSufficientCount(productInfo)).toBe(2);
   });
 
   test('해당 상품의 재고를 차감할 수 있다.', () => {
