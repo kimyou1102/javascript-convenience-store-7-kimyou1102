@@ -18,15 +18,15 @@ export default class InventoryManagement {
     return product[0].promotion;
   }
 
-  isPurchasable(productInfo) {
+  inSufficientCount(productInfo) {
     const product = this.getInventoryInfo().filter(
-      (e) => e.name === productInfo.name,
+      (e) =>
+        e.name === productInfo.name && e.promotion === productInfo.promotion,
     )[0];
-
     if (product.quantity - productInfo.quantity >= 0) {
-      return true;
+      return 0;
     }
-    return false;
+    return productInfo.quantity - product.quantity;
   }
 
   buyProduct(productInfo) {
