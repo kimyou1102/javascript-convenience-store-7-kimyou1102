@@ -20,6 +20,7 @@ export default class Controller {
     this.outputView.printGreetingAndInventory(this.inventoryManagement.getInventoryInfo());
     await this.setProducts();
     await this.checkPromotionCount(this.productsToBuy);
+    await this.checkPromotionStock(this.productsToBuy);
   }
 
   async checkPromotionCount(productsToBuy) {
@@ -40,6 +41,28 @@ export default class Controller {
       this.updateProductQuantity(name, inSufficientCount);
       this.updatePromotionProductQuantity(name, get);
     }
+  }
+
+  async checkPromotionStock(productToBuy) {
+    for (const product of productToBuy) {
+      if (!this.promotionInfo.getPromotion(product.promotion)) return;
+      const { get, buy } = this.promotionInfo.getPromotion(product.promotion);
+      const applicableQuantity = get + buy;
+      const inSufficientCount = this.getInSufficientCount(product, applicableQuantity);
+      if (inSufficientCount !== 0)
+        await this.guideInSufficientStockInfo(product.name, inSufficientCount, applicableQuantity);
+    }
+  }
+
+  getInSufficientCount(product, applicableQuantity) {
+    return this.inventoryManagement.inSufficientCount({
+      ...product,
+      applicableQuantity,
+    });
+  }
+
+  async guideInSufficientStockInfo(name, inSufficientCount, applicableQuantity) {
+    const response = await this.getAnswerToBuy(name, inSufficientCount);
   }
 
   async setProducts() {
@@ -96,6 +119,12 @@ export default class Controller {
       const promotion = this.inventoryManagement.getPromotionNameByProductName(product.name);
       return { ...product, promotion };
     });
+  }
+
+  async getAnswerToBuy(name, count) {
+    return await this.getValidatedInputWithRetry(
+      `현재 ${name} ${count}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
+    );
   }
 
   async getAnswerToAddition(name, count) {
