@@ -5,6 +5,9 @@ import PromotionInfo from '../model/PromotionInfo.js';
 import { parseProducts } from '../utils/parseProduct.js';
 import { DateTimes } from '@woowacourse/mission-utils';
 import InventoryManagement from '../model/InventoryManagement.js';
+import Membership from '../model/Membership.js';
+
+const MEMBERSHIP_MAX = 8000;
 
 export default class Controller {
   constructor(inventory, promotions) {
@@ -14,6 +17,7 @@ export default class Controller {
     this.outputView = new OutputView();
     this.inventoryManagement = new InventoryManagement(inventory);
     this.promotionInfo = new PromotionInfo(promotions);
+    this.membership = new Membership(MEMBERSHIP_MAX);
   }
 
   async run() {
@@ -22,6 +26,7 @@ export default class Controller {
     await this.checkPromotionCount(this.productsToBuy);
     await this.checkPromotionStock(this.productsToBuy);
     this.deductInventory();
+    this.printPurchaseResult();
   }
 
   async checkPromotionCount(productsToBuy) {
@@ -79,6 +84,42 @@ export default class Controller {
     });
   }
 
+  async printPurchaseResult() {
+    const money = this.calculateMoneyToPay();
+    const membershipAmount = await this.getMembershipAmount(money);
+    this.outputView.printPurchaseList(this.productsToBuy, this.promotionProducts, membershipAmount);
+  }
+
+  async getMembershipAmount(money) {
+    const response = await this.getAnswerToMembership();
+
+    if (response === 'Y') {
+      return this.membership.discountMembership(money);
+    }
+    return 0;
+  }
+
+  calculateMoneyToPay() {
+    this.updateProductsPrice();
+    this.updatePromotionProductsPrice();
+
+    return this.productsToBuy.reduce((a, b) => a + b.price, 0);
+  }
+
+  updateProductsPrice() {
+    this.productsToBuy = this.productsToBuy.map((product) => {
+      const { price } = this.inventoryManagement.getProductByProductName(product.name);
+      return { ...product, price };
+    });
+  }
+
+  updatePromotionProductsPrice() {
+    this.promotionProducts = this.promotionProducts.map((product) => {
+      const { price } = this.inventoryManagement.getProductByProductName(product.name);
+      return { ...product, price: price };
+    });
+  }
+
   async setProducts() {
     const productToBuyString = await this.getProductToBuy();
     const productsToBuy = parseProducts(productToBuyString);
@@ -133,6 +174,10 @@ export default class Controller {
       const promotion = this.inventoryManagement.getPromotionNameByProductName(product.name);
       return { ...product, promotion };
     });
+  }
+
+  async getAnswerToMembership() {
+    return await this.getValidatedInputWithRetry('멤버십 할인을 받으시겠습니까? (Y/N)');
   }
 
   async getAnswerToBuy(name, count) {
