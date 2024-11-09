@@ -63,6 +63,13 @@ export default class Controller {
 
   async guideInSufficientStockInfo(name, inSufficientCount, applicableQuantity) {
     const response = await this.getAnswerToBuy(name, inSufficientCount);
+    if (response === 'N') {
+      this.updateProductQuantity(name, inSufficientCount * -1);
+    }
+    this.updatePromotionProductQuantity(
+      name,
+      Math.floor(inSufficientCount / applicableQuantity) * -1,
+    );
   }
 
   async setProducts() {
