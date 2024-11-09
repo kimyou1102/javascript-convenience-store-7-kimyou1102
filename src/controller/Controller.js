@@ -19,6 +19,22 @@ export default class Controller {
   async run() {
     this.outputView.printGreetingAndInventory(this.inventoryManagement.getInventoryInfo());
     await this.setProducts();
+    await this.checkPromotionCount(this.productsToBuy);
+  }
+
+  async checkPromotionCount(productsToBuy) {
+    for (const { name, promotion, quantity } of productsToBuy) {
+      if (!this.promotionInfo.getPromotion(promotion)) return;
+
+      const { get } = this.promotionInfo.getPromotion(promotion);
+      const inSufficientCount = this.promotionInfo.inSufficientCount(promotion, quantity);
+
+      if (inSufficientCount !== 0) await this.guideAddInfo(name, get, inSufficientCount);
+    }
+  }
+
+  async guideAddInfo(name, get, inSufficientCount) {
+    const response = await this.getAnswerToAddition(name, get);
   }
 
   async setProducts() {
@@ -52,6 +68,12 @@ export default class Controller {
       const promotion = this.inventoryManagement.getPromotionNameByProductName(product.name);
       return { ...product, promotion };
     });
+  }
+
+  async getAnswerToAddition(name, count) {
+    return await this.getValidatedInputWithRetry(
+      `현재 ${name}은(는) ${count}개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)`,
+    );
   }
 
   async getProductToBuy() {
