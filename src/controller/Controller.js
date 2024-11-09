@@ -35,6 +35,11 @@ export default class Controller {
 
   async guideAddInfo(name, get, inSufficientCount) {
     const response = await this.getAnswerToAddition(name, get);
+
+    if (response === 'Y') {
+      this.updateProductQuantity(name, inSufficientCount);
+      this.updatePromotionProductQuantity(name, get);
+    }
   }
 
   async setProducts() {
@@ -55,6 +60,29 @@ export default class Controller {
         quantity: count,
       };
     });
+  }
+
+  updateProductQuantity(name, quantityToAdd) {
+    const index = this.productsToBuy.findIndex((product) => product.name === name);
+    this.productsToBuy[index] = this.getProductWithAddedQuantity(
+      this.productsToBuy[index],
+      quantityToAdd,
+    );
+  }
+
+  updatePromotionProductQuantity(name, quantityToAdd) {
+    const index = this.promotionProducts.findIndex((product) => product.name === name);
+    this.promotionProducts[index] = this.getProductWithAddedQuantity(
+      this.promotionProducts[index],
+      quantityToAdd,
+    );
+  }
+
+  getProductWithAddedQuantity(product, quantityToAdd) {
+    return {
+      ...product,
+      quantity: product.quantity + quantityToAdd,
+    };
   }
 
   getApplicablePromotionProducts(productsToBuy) {
