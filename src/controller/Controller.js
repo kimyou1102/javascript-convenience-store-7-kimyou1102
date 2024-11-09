@@ -21,6 +21,7 @@ export default class Controller {
     await this.setProducts();
     await this.checkPromotionCount(this.productsToBuy);
     await this.checkPromotionStock(this.productsToBuy);
+    this.deductInventory();
   }
 
   async checkPromotionCount(productsToBuy) {
@@ -70,6 +71,12 @@ export default class Controller {
       name,
       Math.floor(inSufficientCount / applicableQuantity) * -1,
     );
+  }
+
+  deductInventory() {
+    this.productsToBuy.forEach((product) => {
+      this.inventoryManagement.buyProduct(product);
+    });
   }
 
   async setProducts() {
