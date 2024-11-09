@@ -87,7 +87,9 @@ export default class Controller {
   async printPurchaseResult() {
     const money = this.calculateMoneyToPay();
     const membershipAmount = await this.getMembershipAmount(money);
-    this.outputView.printPurchaseList(this.productsToBuy, this.promotionProducts, membershipAmount);
+    this.outputView.printReceipt(this.productsToBuy, this.promotionProducts, membershipAmount);
+    const response = await this.getAnswerToAddPurchase();
+    if (response === 'Y') await this.run();
   }
 
   async getMembershipAmount(money) {
@@ -174,6 +176,12 @@ export default class Controller {
       const promotion = this.inventoryManagement.getPromotionNameByProductName(product.name);
       return { ...product, promotion };
     });
+  }
+
+  async getAnswerToAddPurchase() {
+    return await this.getValidatedInputWithRetry(
+      '감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)',
+    );
   }
 
   async getAnswerToMembership() {
