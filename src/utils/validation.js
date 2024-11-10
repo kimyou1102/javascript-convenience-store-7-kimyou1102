@@ -57,12 +57,6 @@ const checkProductInfo = (name, quantity) => {
   }
 };
 
-const checkHyphen = (product) => {
-  if (!product.includes('-')) {
-    throw new Error(ERROR_MESSAGE.PRODUCT.INVALID_FORMAT);
-  }
-};
-
 const checkQuantity = (quantity) => {
   if (isNaN(quantity)) {
     throw new Error(ERROR_MESSAGE.PRODUCT.INVALID_FORMAT);
