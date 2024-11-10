@@ -5,7 +5,7 @@ export default class InputView {
     try {
       return await Console.readLineAsync(`${message}\n`);
     } catch (error) {
-      throw new Error('입력 오류');
+      console.error(error);
     }
   }
 }
