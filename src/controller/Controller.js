@@ -26,7 +26,7 @@ export default class Controller {
     await this.checkPromotionCount(this.productsToBuy);
     await this.checkPromotionStock(this.productsToBuy);
     this.deductInventory();
-    this.printPurchaseResult();
+    await this.printPurchaseResult();
   }
 
   async checkPromotionCount(productsToBuy) {

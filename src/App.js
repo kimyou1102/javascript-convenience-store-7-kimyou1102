@@ -7,7 +7,7 @@ class App {
     const promotions = await getPromotionsData();
 
     const controller = new Controller(inventory, promotions);
-    controller.run();
+    await controller.run();
   }
 }
 
