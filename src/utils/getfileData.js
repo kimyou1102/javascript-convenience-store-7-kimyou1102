@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import dirname from './dirname.cjs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { __dirname } = dirname;
 
 export const readMarkdownFile = async (filename) => {
   const filePath = path.join(__dirname, '../../public', filename);
@@ -16,11 +15,33 @@ export const readMarkdownFile = async (filename) => {
 };
 
 export const getProductsData = async () => {
-  return await parseMarkdownFile('products.md');
+  const productsData = await parseMarkdownFile('products.md');
+  return parseProductsData(productsData);
+};
+
+const parseProductsData = (productsData) => {
+  return productsData.map((promotion) => {
+    return {
+      ...promotion,
+      price: Number(promotion.price),
+      quantity: Number(promotion.quantity),
+    };
+  });
 };
 
 export const getPromotionsData = async () => {
-  return await parseMarkdownFile('promotions.md');
+  const promotionsData = await parseMarkdownFile('promotions.md');
+  return parsePromotionsData(promotionsData);
+};
+
+const parsePromotionsData = (promotionsData) => {
+  return promotionsData.map((promotion) => {
+    return {
+      ...promotion,
+      buy: Number(promotion.buy),
+      get: Number(promotion.get),
+    };
+  });
 };
 
 const parseMarkdownFile = async (fileName) => {
