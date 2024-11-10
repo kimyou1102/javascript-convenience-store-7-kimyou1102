@@ -12,40 +12,35 @@ describe('재고관리 테스트', () => {
   test.each([
     ['감자칩', '반짝할인'],
     ['콜라', '탄산2+1'],
-    ['비타민워터', ''],
-  ])(
-    '상품 이름으로 프로모션 이름을 가져올 수 있다.',
-    (productName, promotionName) => {
-      const productData = [
-        {
-          name: '콜라',
-          price: 1000,
-          quantity: 10,
-          promotion: '탄산2+1',
-        },
-        {
-          name: '감자칩',
-          price: 1500,
-          quantity: 5,
-          promotion: '반짝할인',
-        },
-        {
-          name: '비타민워터',
-          price: 1500,
-          quantity: 5,
-          promotion: 'null',
-        },
-      ];
+    ['비타민워터', 'null'],
+  ])('상품 이름으로 프로모션 이름을 가져올 수 있다.', (productName, promotionName) => {
+    const productData = [
+      {
+        name: '콜라',
+        price: 1000,
+        quantity: 10,
+        promotion: '탄산2+1',
+      },
+      {
+        name: '감자칩',
+        price: 1500,
+        quantity: 5,
+        promotion: '반짝할인',
+      },
+      {
+        name: '비타민워터',
+        price: 1500,
+        quantity: 5,
+        promotion: 'null',
+      },
+    ];
 
-      const inventoryManagement = new InventoryManagement(productData);
+    const inventoryManagement = new InventoryManagement(productData);
 
-      expect(
-        inventoryManagement.getPromotionNameByProductName(productName),
-      ).toBe(promotionName);
-    },
-  );
+    expect(inventoryManagement.getPromotionNameByProductName(productName)).toBe(promotionName);
+  });
 
-  test('재고가 있는 상품은 구매 가능하다.', () => {
+  test('부족한 수량이 없는 경우 0을 반환한다.', () => {
     const productData = [
       {
         name: '콜라',
@@ -64,6 +59,7 @@ describe('재고관리 테스트', () => {
       name: '콜라',
       quantity: 3,
       promotion: '탄산2+1',
+      applicableQuantity: 3,
     };
 
     const inventoryManagement = new InventoryManagement(productData);
@@ -71,7 +67,7 @@ describe('재고관리 테스트', () => {
     expect(inventoryManagement.inSufficientCount(productInfo)).toBe(0);
   });
 
-  test('재고가 없는 상품은 구매 가능하다.', () => {
+  test('부족한 수량을 확인할 수 있다.', () => {
     const productData = [
       {
         name: '콜라',
@@ -90,10 +86,11 @@ describe('재고관리 테스트', () => {
       name: '사이다',
       quantity: 10,
       promotion: '탄산2+1',
+      applicableQuantity: 3,
     };
     const inventoryManagement = new InventoryManagement(productData);
 
-    expect(inventoryManagement.inSufficientCount(productInfo)).toBe(2);
+    expect(inventoryManagement.inSufficientCount(productInfo)).toBe(4);
   });
 
   test('해당 상품의 재고를 차감할 수 있다.', () => {
@@ -114,6 +111,7 @@ describe('재고관리 테스트', () => {
     const productInfo = {
       name: '사이다',
       quantity: 2,
+      promotion: '탄산2+1',
     };
 
     const inventoryManagement = new InventoryManagement(productData);
