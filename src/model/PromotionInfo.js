@@ -23,9 +23,7 @@ export default class PromotionInfo {
   }
 
   getPromotion(promotionName) {
-    return this.#promotionInfo.find(
-      (promotion) => promotion.name === promotionName,
-    );
+    return this.#promotionInfo.find((promotion) => promotion.name === promotionName);
   }
 
   isPromotionApplicable(promotionName, now) {
@@ -40,12 +38,9 @@ export default class PromotionInfo {
   }
 
   inSufficientCount(promotionName, productQuantity) {
-    const { buy } = this.#promotionInfo.find(
-      (promotion) => promotion.name === promotionName,
-    );
-    if (productQuantity % buy !== 0) {
-      const count = Math.ceil(productQuantity / buy);
-      return buy * count - productQuantity;
+    const { buy, get } = this.#promotionInfo.find((promotion) => promotion.name === promotionName);
+    if (productQuantity < buy + get) {
+      return buy + get - productQuantity;
     }
     return 0;
   }
