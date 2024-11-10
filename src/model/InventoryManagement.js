@@ -33,6 +33,14 @@ export default class InventoryManagement {
     return productInfo.quantity - canStock;
   }
 
+  getTotalInSufficientCount(productName, quantity) {
+    const product = this.#inventoryInfo.filter((product) => product.name === productName);
+    const sumStock = product.reduce((a, b) => a + b.quantity, 0);
+
+    if (sumStock >= quantity) return true;
+    return false;
+  }
+
   buyProduct(productInfo) {
     const index = this.getInventoryInfo().findIndex(
       (e) => e.name === productInfo.name && e.promotion === productInfo.promotion,
