@@ -17,7 +17,7 @@ export default class OutputView {
     const promotion = promotionProducts.reduce((a, b) => a + b.price * b.quantity, 0);
     Console.print(`행사할인			-${promotion}`);
     Console.print(`멤버십할인			-${membership}`);
-    Console.print(`내실돈			 ${totalMoney - promotion - membership}`);
+    Console.print(`내실돈			 ${(totalMoney - promotion - membership).toLocaleString('ko-KR')}`);
   }
 
   printProducts(products) {
