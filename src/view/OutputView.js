@@ -56,4 +56,8 @@ export default class OutputView {
     }
     Console.print(`- ${name} ${money}원 ${quantityWithUnit} ${promotion}`);
   }
+
+  printError(message) {
+    Console.print(message);
+  }
 }
