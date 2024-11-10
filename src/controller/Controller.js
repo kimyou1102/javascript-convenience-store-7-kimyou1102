@@ -1,11 +1,12 @@
 import InputView from '../view/InputView.js';
 import OutputView from '../view/OutputView.js';
-import { INPUT_MESSAGE } from '../constants/constants.js';
+import { INPUT_MESSAGE, ERROR_MESSAGE } from '../constants/constants.js';
 import PromotionInfo from '../model/PromotionInfo.js';
 import { parseProducts } from '../utils/parseProduct.js';
 import { DateTimes } from '@woowacourse/mission-utils';
 import InventoryManagement from '../model/InventoryManagement.js';
 import Membership from '../model/Membership.js';
+import { validateProductInput, validateAnswerInput } from '../utils/validation.js';
 
 const MEMBERSHIP_MAX = 8000;
 
@@ -181,31 +182,67 @@ export default class Controller {
   async getAnswerToAddPurchase() {
     return await this.getValidatedInputWithRetry(
       '감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)',
+      validateAnswerInput,
     );
   }
 
   async getAnswerToMembership() {
-    return await this.getValidatedInputWithRetry('멤버십 할인을 받으시겠습니까? (Y/N)');
+    return await this.getValidatedInputWithRetry(
+      '멤버십 할인을 받으시겠습니까? (Y/N)',
+      validateAnswerInput,
+    );
   }
 
   async getAnswerToBuy(name, count) {
     return await this.getValidatedInputWithRetry(
       `현재 ${name} ${count}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
+      validateAnswerInput,
     );
   }
 
   async getAnswerToAddition(name, count) {
     return await this.getValidatedInputWithRetry(
       `현재 ${name}은(는) ${count}개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)`,
+      validateAnswerInput,
     );
   }
 
   async getProductToBuy() {
-    return await this.getValidatedInputWithRetry(INPUT_MESSAGE.PURCHASE);
+    return await this.getValidatedInputWithRetry(INPUT_MESSAGE.PURCHASE, this.validateProductToBuy);
   }
 
-  async getValidatedInputWithRetry(message) {
-    const input = await this.inputView.getInput(message);
-    return input;
+  validateProductToBuy = (input) => {
+    validateProductInput(input);
+    const productsToBuy = parseProducts(input);
+    this.validateExistProduct(productsToBuy);
+    this.validateProductStock(productsToBuy);
+  };
+
+  validateProductStock = (productsToBuy) => {
+    productsToBuy.forEach((product) => {
+      const isCheck = this.inventoryManagement.getTotalInSufficientCount(
+        product.name,
+        product.quantity,
+      );
+      if (!isCheck) throw new Error(ERROR_MESSAGE.PRODUCT.OUT_OF_STOCK);
+    });
+  };
+
+  validateExistProduct = (productsToBuy) => {
+    productsToBuy.forEach(({ name }) => {
+      const product = this.inventoryManagement.getProductByProductName(name);
+      if (!product) throw new Error(ERROR_MESSAGE.PRODUCT.NOT_EXIST);
+    });
+  };
+
+  async getValidatedInputWithRetry(message, validate) {
+    try {
+      const input = await this.inputView.getInput(message);
+      validate(input);
+      return input;
+    } catch (error) {
+      this.outputView.printError(error.message);
+      return await this.getValidatedInputWithRetry(message, validate);
+    }
   }
 }
