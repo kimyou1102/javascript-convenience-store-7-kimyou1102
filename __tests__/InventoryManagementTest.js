@@ -123,4 +123,42 @@ describe('재고관리 테스트', () => {
 
     expect(afterInventory.quantity).toBe(6);
   });
+
+  test('프로모션 상품이 재고가 부족할 시 프로모션 미적용 상품의 재고를 차감한다.', () => {
+    const productData = [
+      {
+        name: '콜라',
+        price: 1000,
+        quantity: 1,
+        promotion: '탄산2+1',
+      },
+      {
+        name: '콜라',
+        price: 1000,
+        quantity: 10,
+        promotion: 'null',
+      },
+      {
+        name: '사이다',
+        price: 1000,
+        quantity: 8,
+        promotion: '탄산2+1',
+      },
+    ];
+    const productInfo = {
+      name: '콜라',
+      quantity: 3,
+      promotion: '탄산2+1',
+      applicableQuantity: 3,
+    };
+
+    const inventoryManagement = new InventoryManagement(productData);
+    inventoryManagement.buyProduct(productInfo);
+
+    const afterInventory = inventoryManagement
+      .getInventoryInfo()
+      .filter((e) => e.name === productInfo.name && e.promotion === 'null')[0];
+
+    expect(afterInventory.quantity).toBe(7);
+  });
 });
