@@ -32,7 +32,7 @@ export default class Controller {
 
   async checkPromotionCount(productsToBuy) {
     for (const { name, promotion, quantity } of productsToBuy) {
-      if (!this.promotionInfo.getPromotion(promotion)) return;
+      if (!this.promotionInfo.getPromotion(promotion)) continue;
 
       const { get } = this.promotionInfo.getPromotion(promotion);
       const inSufficientCount = this.promotionInfo.inSufficientCount(promotion, quantity);
@@ -52,7 +52,7 @@ export default class Controller {
 
   async checkPromotionStock(productToBuy) {
     for (const product of productToBuy) {
-      if (!this.promotionInfo.getPromotion(product.promotion)) return;
+      if (!this.promotionInfo.getPromotion(product.promotion)) continue;
       const { get, buy } = this.promotionInfo.getPromotion(product.promotion);
       const applicableQuantity = get + buy;
       const inSufficientCount = this.getInSufficientCount(product, applicableQuantity);
