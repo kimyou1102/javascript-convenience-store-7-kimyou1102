@@ -33,12 +33,18 @@ export default class Controller {
   async checkPromotionCount(productsToBuy) {
     for (const { name, promotion, quantity } of productsToBuy) {
       if (!this.promotionInfo.getPromotion(promotion)) continue;
-
+      if (!this.getSameProduct(name, promotion)) continue;
       const { get } = this.promotionInfo.getPromotion(promotion);
       const inSufficientCount = this.promotionInfo.inSufficientCount(promotion, quantity);
 
       if (inSufficientCount !== 0) await this.guideAddInfo(name, get, inSufficientCount);
     }
+  }
+
+  getSameProduct(name, promotion) {
+    return this.promotionProducts.find(
+      (product) => product.name === name && product.promotion === promotion,
+    );
   }
 
   async guideAddInfo(name, get, inSufficientCount) {
