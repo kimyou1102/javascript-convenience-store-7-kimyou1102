@@ -65,9 +65,7 @@ describe('컨트롤러 테스트', () => {
 
     const controller = new Controller(inventory, promotions);
 
-    expect(controller.getApplicablePromotionProducts(productToBuy)).toEqual(
-      result,
-    );
+    expect(controller.getApplicablePromotionProducts(productToBuy)).toEqual(result);
   });
 
   test('프로모션 가능한 것들중 더 가져와야할 개수가 있다는 안내후 추가한다면 구매할 물품 개수를 추가한다.', async () => {
@@ -91,20 +89,24 @@ describe('컨트롤러 테스트', () => {
         name: '사이다',
         quantity: 1,
         promotion: '탄산2+1',
+        applicableQuantity: 3,
       },
       {
         name: '탄산수',
         quantity: 0,
         promotion: '탄산2+1',
+        applicableQuantity: 3,
       },
     ]);
     expect(controller.productsToBuy).toEqual([
       {
+        applicableQuantity: 3,
         name: '사이다',
         quantity: 3,
         promotion: '탄산2+1',
       },
       {
+        applicableQuantity: 3,
         name: '탄산수',
         quantity: 1,
         promotion: '탄산2+1',
@@ -126,6 +128,7 @@ describe('컨트롤러 테스트', () => {
         name: '사이다',
         quantity: 3,
         promotion: '탄산2+1',
+        applicableQuantity: 3,
       },
     ]);
     expect(controller.productsToBuy).toEqual([
@@ -133,6 +136,7 @@ describe('컨트롤러 테스트', () => {
         name: '사이다',
         quantity: 9,
         promotion: '탄산2+1',
+        applicableQuantity: 3,
       },
     ]);
   });
