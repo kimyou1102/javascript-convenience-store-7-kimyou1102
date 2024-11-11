@@ -106,7 +106,11 @@ export default class Controller {
     this.updateProductsPrice();
     this.updatePromotionProductsPrice();
 
-    return this.productsToBuy.reduce((a, b) => a + b.price, 0);
+    const promotionTotalPrice = this.promotionProducts.reduce(
+      (a, b) => a + b.price * b.quantity,
+      0,
+    );
+    return this.productsToBuy.reduce((a, b) => a + b.price * b.quantity, 0) - promotionTotalPrice;
   }
 
   updateProductsPrice() {
