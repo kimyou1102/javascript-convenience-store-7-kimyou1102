@@ -30,7 +30,7 @@ export default class PromotionInfo {
     if (!this.getPromotion(promotionName)) return false;
     const { startDate, endDate } = this.getPromotionDateByName(promotionName);
     const nowDate = new Date(now);
-
+    nowDate.setHours(0, 0, 0, 0);
     if (startDate <= nowDate && nowDate <= endDate) {
       return true;
     }
