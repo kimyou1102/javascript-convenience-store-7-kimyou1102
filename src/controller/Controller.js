@@ -201,14 +201,14 @@ export default class Controller {
 
   async getAnswerToBuy(name, count) {
     return await this.getValidatedInputWithRetry(
-      `현재 ${name} ${count}${INPUT_MESSAGE.PROMOTION_NOT_APPLICABLE}`,
+      `\n현재 ${name} ${count}${INPUT_MESSAGE.PROMOTION_NOT_APPLICABLE}`,
       validateAnswerInput,
     );
   }
 
   async getAnswerToAddition(name, count) {
     return await this.getValidatedInputWithRetry(
-      `현재 ${name}은(는) ${count}${INPUT_MESSAGE.PROMPT_FREE_ADDITION}`,
+      `\n현재 ${name}은(는) ${count}${INPUT_MESSAGE.PROMPT_FREE_ADDITION}`,
       validateAnswerInput,
     );
   }
@@ -222,9 +222,10 @@ export default class Controller {
     const productsToBuy = parseProducts(input);
     this.validateExistProduct(productsToBuy);
     this.validateProductStock(productsToBuy);
+    this.validateDuplication(productsToBuy);
   };
 
-  validateProductStock = (productsToBuy) => {
+  validateProductStock(productsToBuy) {
     productsToBuy.forEach((product) => {
       const isCheck = this.inventoryManagement.getTotalInSufficientCount(
         product.name,
@@ -232,7 +233,15 @@ export default class Controller {
       );
       if (!isCheck) throw new Error(ERROR_MESSAGE.PRODUCT.OUT_OF_STOCK);
     });
-  };
+  }
+
+  validateDuplication(productsToBuy) {
+    const products = productsToBuy.map((product) => product.name);
+    const unique = new Set(products);
+    if (products.length !== unique.size) {
+      throw new Error(ERROR_MESSAGE.PRODUCT.DUPLICATION);
+    }
+  }
 
   validateExistProduct = (productsToBuy) => {
     productsToBuy.forEach(({ name }) => {
