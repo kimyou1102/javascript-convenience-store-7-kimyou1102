@@ -87,6 +87,11 @@ export default class Controller {
 
   deductInventory() {
     this.productsToBuy.forEach((product) => {
+      const promotionProduct = this.getSameProduct(product.name, product.promotion);
+      if (!promotionProduct) {
+        this.inventoryManagement.buyProduct({ ...product, promotion: 'null' });
+        return;
+      }
       this.inventoryManagement.buyProduct(product);
     });
   }
