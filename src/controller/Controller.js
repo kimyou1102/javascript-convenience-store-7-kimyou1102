@@ -174,8 +174,12 @@ export default class Controller {
 
   getProductsWithPromotion(productsToBuy) {
     return productsToBuy.map((product) => {
-      const promotion = this.inventoryManagement.getPromotionNameByProductName(product.name);
-      return { ...product, promotion };
+      const promotionName = this.inventoryManagement.getPromotionNameByProductName(product.name);
+      let applicableQuantity = 0;
+      const promotion = this.promotionInfo.getPromotion(promotionName);
+      if (promotion) applicableQuantity = promotion.buy + promotion.get;
+
+      return { ...product, promotion: promotionName, applicableQuantity };
     });
   }
 

@@ -42,11 +42,19 @@ export default class InventoryManagement {
   }
 
   buyProduct(productInfo) {
-    const index = this.getInventoryInfo().findIndex(
+    let index = this.getProductIndex(productInfo);
+    let product = this.#inventoryInfo[index];
+    if (product.quantity < productInfo.applicableQuantity) {
+      index = this.getProductIndex({ ...productInfo, promotion: 'null' });
+    }
+
+    product = this.#inventoryInfo[index];
+    this.#inventoryInfo[index].quantity = product.quantity - productInfo.quantity;
+  }
+
+  getProductIndex(productInfo) {
+    return this.getInventoryInfo().findIndex(
       (e) => e.name === productInfo.name && e.promotion === productInfo.promotion,
     );
-    const product = this.getInventoryInfo()[index];
-
-    this.#inventoryInfo[index].quantity = product.quantity - productInfo.quantity;
   }
 }
