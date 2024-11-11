@@ -1,6 +1,6 @@
 import InputView from '../view/InputView.js';
 import OutputView from '../view/OutputView.js';
-import { INPUT_MESSAGE, ERROR_MESSAGE } from '../constants/constants.js';
+import { INPUT_MESSAGE, ERROR_MESSAGE, RESPONSE } from '../constants/constants.js';
 import PromotionInfo from '../model/PromotionInfo.js';
 import { parseProducts } from '../utils/parseProduct.js';
 import { DateTimes } from '@woowacourse/mission-utils';
@@ -44,7 +44,7 @@ export default class Controller {
   async guideAddInfo(name, get, inSufficientCount) {
     const response = await this.getAnswerToAddition(name, get);
 
-    if (response === 'Y') {
+    if (response === RESPONSE.YES) {
       this.updateProductQuantity(name, inSufficientCount);
       this.updatePromotionProductQuantity(name, get);
     }
@@ -70,7 +70,7 @@ export default class Controller {
 
   async guideInSufficientStockInfo(name, inSufficientCount, applicableQuantity) {
     const response = await this.getAnswerToBuy(name, inSufficientCount);
-    if (response === 'N') {
+    if (response === RESPONSE.NO) {
       this.updateProductQuantity(name, inSufficientCount * -1);
     }
     this.updatePromotionProductQuantity(
@@ -90,14 +90,14 @@ export default class Controller {
     const membershipAmount = await this.getMembershipAmount(money);
     this.outputView.printReceipt(this.productsToBuy, this.promotionProducts, membershipAmount);
     const response = await this.getAnswerToAddPurchase();
-    if (response === 'Y') await this.run();
+    if (response === RESPONSE.YES) await this.run();
   }
 
   async getMembershipAmount(money) {
     if (money === 0) return 0;
     const response = await this.getAnswerToMembership();
 
-    if (response === 'Y') {
+    if (response === RESPONSE.YES) {
       return this.membership.discountMembership(money);
     }
     return 0;

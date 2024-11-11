@@ -16,3 +16,8 @@ export const ERROR_MESSAGE = {
   },
   INVALID_FORMAT: '[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.',
 };
+
+export const RESPONSE = {
+  YES: 'Y',
+  NO: 'N',
+};
