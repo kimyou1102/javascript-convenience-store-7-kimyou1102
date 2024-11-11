@@ -13,16 +13,20 @@ export default class OutputView {
 
   printPurchasePriceResult(products, membership, promotionProducts) {
     const totalMoney = products.reduce((a, b) => a + b.price * b.quantity, 0);
-    Console.print(`총구매액		${products.reduce((a, b) => a + b.quantity, 0)}	${totalMoney}`);
+    Console.print(
+      `총구매액		${products.reduce((a, b) => a + b.quantity, 0)}	${totalMoney.toLocaleString('ko-KR')}`,
+    );
     const promotion = promotionProducts.reduce((a, b) => a + b.price * b.quantity, 0);
-    Console.print(`행사할인			-${promotion}`);
-    Console.print(`멤버십할인			-${membership}`);
+    Console.print(`행사할인			-${promotion.toLocaleString('ko-KR')}`);
+    Console.print(`멤버십할인			-${membership.toLocaleString('ko-KR')}`);
     Console.print(`내실돈			 ${(totalMoney - promotion - membership).toLocaleString('ko-KR')}`);
   }
 
   printProducts(products) {
     products.forEach((product) => {
-      Console.print(`${product.name}		${product.quantity}	${product.quantity * product.price}`);
+      Console.print(
+        `${product.name}		${product.quantity}	${(product.quantity * product.price).toLocaleString('ko-KR')}`,
+      );
     });
   }
 
