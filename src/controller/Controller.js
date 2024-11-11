@@ -94,6 +94,7 @@ export default class Controller {
   }
 
   async getMembershipAmount(money) {
+    if (money === 0) return 0;
     const response = await this.getAnswerToMembership();
 
     if (response === 'Y') {
